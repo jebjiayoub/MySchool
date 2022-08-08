@@ -10,13 +10,13 @@ use Illuminate\Support\Facades\Http;
 class ContactsController extends Controller
 {
     /**
-     * .
+     * Get contacts list.
      */
     public function index()
     {
         $contacts = Http::withHeaders([
-            'Authorization' => 'Basic ' . base64_encode('developer:developer'),
-        ])->acceptJson()->get('https://egdev.crmforschools.net/api/contacts');
+            'Authorization' => 'Basic ' . base64_encode(env('MAUTIC_USERNAME').':'.env('MAUTIC_PASSWORD')),
+        ])->acceptJson()->get(env('MAUTIC_API_URL').'api/contacts');
 
         $contacts = $contacts['contacts'];
         
@@ -24,7 +24,7 @@ class ContactsController extends Controller
     }
 
     /**
-     * .
+     * Get the form to create new contact.
      */
     public function create()
     {
@@ -32,13 +32,13 @@ class ContactsController extends Controller
     }
 
     /**
-     * .
+     * Add new contact.
      */
     public function store(StoreContactRequest $request)
     {
         $response = Http::withHeaders([
-            'Authorization' => 'Basic ' . base64_encode('developer:developer'),
-        ])->post('https://egdev.crmforschools.net/api/contacts/new', [
+            'Authorization' => 'Basic ' . base64_encode(env('MAUTIC_USERNAME').':'.env('MAUTIC_PASSWORD')),
+        ])->post(env('MAUTIC_API_URL').'api/contacts/new', [
             'campus' => 'developer',
             'contact_type' => 'Lead',
             'owner' => '40',
@@ -57,25 +57,25 @@ class ContactsController extends Controller
     }
 
     /**
-     * .
+     * Get the form to edit existed contact.
      */
     public function show($contactId)
     {
         $contact = Http::withHeaders([
-            'Authorization' => 'Basic ' . base64_encode('developer:developer'),
-        ])->acceptJson()->get('https://egdev.crmforschools.net/api/contacts/' . $contactId);
+            'Authorization' => 'Basic ' . base64_encode(env('MAUTIC_USERNAME').':'.env('MAUTIC_PASSWORD')),
+        ])->acceptJson()->get(env('MAUTIC_API_URL').'api/contacts/' . $contactId);
 
         return view('contacts.update', ['contact' => $contact['contact']]);
     }
 
     /**
-     * .
+     * Update contact.
      */
     public function update(UpdateContactRequest $request, $id)
     {
         $response = Http::withHeaders([
-            'Authorization' => 'Basic ' . base64_encode('developer:developer'),
-        ])->patch('https://egdev.crmforschools.net/api/contacts/' . $id . '/edit', [
+            'Authorization' => 'Basic ' . base64_encode(env('MAUTIC_USERNAME').':'.env('MAUTIC_PASSWORD')),
+        ])->patch(env('MAUTIC_API_URL').'api/contacts/' . $id . '/edit', [
             'firstname' => $request->firstname,
             'lastname' => $request->lastname,
             'email' => $request->email,
@@ -91,13 +91,13 @@ class ContactsController extends Controller
     }
 
     /**
-     * .
+     * Delete contact.
      */
     public function destroy($id)
     {
         $response = Http::withHeaders([
-            'Authorization' => 'Basic ' . base64_encode('developer:developer'),
-        ])->delete('https://egdev.crmforschools.net/api/contacts/' . $id . '/delete');
+            'Authorization' => 'Basic ' . base64_encode(env('MAUTIC_USERNAME').':'.env('MAUTIC_PASSWORD')),
+        ])->delete(env('MAUTIC_API_URL').'api/contacts/' . $id . '/delete');
 
         if($response->status() == 200) {
             return redirect()->back()->with('success', 'The contact was deleted succesfully!');
